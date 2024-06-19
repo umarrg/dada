@@ -59,6 +59,9 @@ async function createMeme(imagePath, text) {
 bot.onText(/\/memebot/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Welcome to DADA Meme Bot, time to get absurd! 🍭 Use /upload to upload an image or /library to choose a premade image.');
 });
+bot.onText(/\/start/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Welcome to DADA Meme Bot, time to get absurd! 🍭 Use /upload to upload an image or /library to choose a premade image.');
+});
 
 bot.onText(/\/upload/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Please upload an image.');
@@ -88,9 +91,10 @@ bot.onText(/\/upload/, (msg) => {
 
 bot.onText(/\/library/, async (msg) => {
     try {
+        const updatedImages = fs.readdirSync(imagesDir).filter(file => /\.(jpg|jpeg|png)$/.test(file));
         const messageIdsToDelete = [];
 
-        const thumbnailPromises = images.map(async (image, index) => {
+        const thumbnailPromises = updatedImages.map(async (image, index) => {
             const imagePath = path.join(imagesDir, image);
             const imageBuffer = await Jimp.read(imagePath);
             imageBuffer.resize(100, Jimp.AUTO);
@@ -106,7 +110,7 @@ bot.onText(/\/library/, async (msg) => {
             messageIdsToDelete.push(sentMessage.message_id);
         }
 
-        const options = images.map((image, index) => [
+        const options = updatedImages.map((image, index) => [
             { text: `Image ${index + 1}`, callback_data: `choose_${index}` }
         ]);
 
@@ -124,7 +128,7 @@ bot.onText(/\/library/, async (msg) => {
 
             if (action.startsWith('choose_')) {
                 const index = parseInt(action.split('_')[1], 10);
-                const chosenImage = images[index];
+                const chosenImage = updatedImages[index];
                 const imagePath = path.join(imagesDir, chosenImage);
 
                 const textMsg = await bot.sendMessage(msg.chat.id, 'Image chosen. Now send the caption text.');
@@ -143,6 +147,7 @@ bot.onText(/\/library/, async (msg) => {
         bot.sendMessage(msg.chat.id, 'An error occurred while fetching images. Please try again.');
     }
 });
+
 bot.onText(/\/removeimage/, async (msg) => {
     try {
         const options = images.map((image, index) => [
