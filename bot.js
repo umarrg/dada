@@ -150,7 +150,9 @@ bot.onText(/\/library/, async (msg) => {
 
 bot.onText(/\/removeimage/, async (msg) => {
     try {
-        const options = images.map((image, index) => [
+        const updatedImages = fs.readdirSync(imagesDir).filter(file => /\.(jpg|jpeg|png)$/.test(file));
+
+        const options = updatedImages.map((image, index) => [
             { text: `Image ${index + 1}`, callback_data: `remove_${index}` }
         ]);
 
@@ -164,12 +166,10 @@ bot.onText(/\/removeimage/, async (msg) => {
             const action = callbackQuery.data;
             if (action.startsWith('remove_')) {
                 const index = parseInt(action.split('_')[1], 10);
-                const imageToRemove = images[index];
+                const imageToRemove = updatedImages[index];
                 const imagePath = path.join(imagesDir, imageToRemove);
 
                 fs.unlinkSync(imagePath);
-
-                images.splice(index, 1);
 
                 bot.sendMessage(callbackQuery.message.chat.id, 'Image removed from the library.');
             }
@@ -178,7 +178,6 @@ bot.onText(/\/removeimage/, async (msg) => {
         console.error('Error removing image:', error);
         bot.sendMessage(msg.chat.id, 'An error occurred while removing the image. Please try again.');
     }
-
 });
 
 bot.onText(/\/addimage/, (msg) => {
