@@ -57,10 +57,10 @@ async function createMeme(imagePath, text) {
 }
 
 bot.onText(/\/memebot/, (msg) => {
-    bot.sendMessage(msg.chat.id, 'Welcome to DADA Meme Bot, time to get absurd! 🍭 Use /upload to upload an image or /library to choose a premade image.');
+    bot.sendMessage(msg.chat.id, 'Welcome to DADA Meme Bot, time to get absurd! 🍭 Use /upload to use your own image or /library to choose a premade image. Loading the library will take a few seconds.');
 });
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, 'Welcome to DADA Meme Bot, time to get absurd! 🍭 Use /upload to upload an image or /library to choose a premade image.');
+    bot.sendMessage(msg.chat.id, 'Welcome to DADA Meme Bot, time to get absurd! 🍭 Use /upload to use your own image or /library to choose a premade image. Loading the library will take a few seconds.');
 });
 
 bot.onText(/\/upload/, (msg) => {
